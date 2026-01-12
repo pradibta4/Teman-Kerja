@@ -21,6 +21,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   void dispose() {
     signInController.clear();
+    Get.delete<SignInController>(force: true);
     super.dispose();
   }
 
@@ -90,13 +91,20 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 DView.spaceHeight(30),
                 Obx(() {
-                  bool loading = signInController.loading;
-                  if (loading) return DView.loadingCircle();
+                  final loading = signInController.loading;
                   return FilledButton(
-                    onPressed: () {
-                      signInController.execute(context);
-                    },
-                    child: const Text('Sign In & Explore'),
+                    onPressed: loading
+                        ? null
+                        : () {
+                            signInController.execute(context);
+                          },
+                    child: loading
+                        ? SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: DView.loadingCircle(),
+                          )
+                        : const Text('Sign In & Explore'),
                   );
                 }),
                 DView.spaceHeight(),

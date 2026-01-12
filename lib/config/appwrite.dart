@@ -7,7 +7,7 @@ class Appwrite {
   static const databaseId = '690db42a002e922bbbf6';
   static const collectionUsers = 'users';
   static const collectionWorkers = 'workers';
-  static const collectionBookings = 'bookings';
+  static const collectionBookings = 'booking';
   static const bucketWorkers = '690ea1e200038380f1c7';
 
   static Client client = Client();

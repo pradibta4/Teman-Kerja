@@ -16,13 +16,14 @@ class SignUpController extends GetxController {
   bool get loading => _loading.value;
   set loading(bool n) => _loading.value = n;
 
-  void execute(BuildContext context) {
-    if (edtName.text == '') {
+  Future<void> execute(BuildContext context) async {
+    // ------- VALIDASI INPUT -------
+    if (edtName.text.isEmpty) {
       AppInfo.failed(context, 'Name wajib diisi');
       return;
     }
 
-    if (edtEmail.text == '') {
+    if (edtEmail.text.isEmpty) {
       AppInfo.failed(context, 'Email wajib diisi');
       return;
     }
@@ -32,7 +33,7 @@ class SignUpController extends GetxController {
       return;
     }
 
-    if (edtPassword.text == '') {
+    if (edtPassword.text.isEmpty) {
       AppInfo.failed(context, 'Password wajib diisi');
       return;
     }
@@ -42,19 +43,40 @@ class SignUpController extends GetxController {
       return;
     }
 
+    // ------- CALL API -------
     loading = true;
-    UserDatasource.signUp(edtName.text, edtEmail.text, edtPassword.text).then((
-      value,
-    ) {
-      loading = false;
-      value.fold(
+    try {
+      final result = await UserDatasource.signUp(
+        edtName.text.trim(),
+        edtEmail.text.trim(),
+        edtPassword.text,
+      );
+
+      result.fold(
         (message) {
           AppInfo.failed(context, message);
         },
         (data) {
           AppInfo.toastSucces('Berhasil');
+          // TODO: kalau mau langsung login / pindah page di sini
         },
       );
-    });
+    } catch (e, st) {
+      // kalau Future-nya error / throw
+      // (misal AppwriteException belum di-handle di datasource)
+      debugPrint('SignUp error: $e\n$st');
+      AppInfo.failed(context, e.toString());
+    } finally {
+      // ini DIJAMIN kepanggil, mau sukses atau error
+      loading = false;
+    }
+  }
+
+  @override
+  void onClose() {
+    edtName.dispose();
+    edtEmail.dispose();
+    edtPassword.dispose();
+    super.onClose();
   }
 }
