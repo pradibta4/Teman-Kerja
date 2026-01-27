@@ -45,4 +45,4 @@ app.*.map.json
 /android/app/release
 
 #config
-/home/pradibta/Portofolio/Teman-Kerja/lib/config/appwrite.dart
+/lib/config/appwrite.dart
